@@ -1,0 +1,2 @@
+target = "wasm32-unknown-unknown"
+clippy_preference = "opt-in"

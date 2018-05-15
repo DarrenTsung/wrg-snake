@@ -1,0 +1,6 @@
+[package]
+name = "wrg-2d"
+version = "0.1.0"
+authors = ["Darren Tsung <darren@onesignal.com>"]
+
+[dependencies]
