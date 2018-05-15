@@ -99,13 +99,13 @@ impl ApplicationDelegate {
         title_config.input_allowed = false;
         let game_handle = spawner.spawn(SnakeGame::new(title_config));
         let button_handle = spawner.spawn(new_button(Transform::new(
-            TransformVector::Relative(Vector2 { x: 0.5, y: 0.26, }),
+            TransformVector::Relative(Vector2 { x: 0.5, y: 0.29, }),
             TransformVector::Absolute(Vector2 { x: 150.0, y: 40.0, }),
             Vector2 { x: 0.5, y: 0.5, },
         ), "Play".to_string(), 23.0, 1));
 
         let title_handle = spawner.spawn(Text::new(Transform::new(
-            TransformVector::Relative(Vector2 { x: 0.5, y: 0.63, }),
+            TransformVector::Relative(Vector2 { x: 0.5, y: 0.66, }),
             TransformVector::Absolute(Vector2 { x: 10.0, y: 10.0, }),
             Vector2 { x: 0.5, y: 0.5, },
         ), TextConfig {
@@ -116,7 +116,7 @@ impl ApplicationDelegate {
         }));
 
         let subtitle_handle = spawner.spawn(Text::new(Transform::new(
-            TransformVector::Relative(Vector2 { x: 0.5, y: 0.16 }),
+            TransformVector::Relative(Vector2 { x: 0.5, y: 0.19 }),
             TransformVector::Absolute(Vector2 { x: 10.0, y: 10.0, }),
             Vector2 { x: 0.5, y: 0.5, },
         ), TextConfig {
@@ -127,12 +127,12 @@ impl ApplicationDelegate {
         }));
 
         let made_with_handle = spawner.spawn(Text::new(Transform::new(
-            TransformVector::Relative(Vector2 { x: 0.5, y: 0.51 }),
+            TransformVector::Relative(Vector2 { x: 0.5, y: 0.54 }),
             TransformVector::Absolute(Vector2 { x: 10.0, y: 10.0, }),
             Vector2 { x: 0.5, y: 0.5, },
         ), TextConfig {
             text: "made with wasm-rgame".to_string(),
-            font_size: 21.0,
+            font_size: 19.5,
             color: TEXT_COLOR,
             render_order: 5,
         }));
@@ -164,7 +164,7 @@ impl ApplicationDelegate {
         size: usize
     ) -> ApplicationState {
         let button_handle = spawner.spawn(new_button(Transform::new(
-            TransformVector::Relative(Vector2 { x: 0.5, y: 0.26, }),
+            TransformVector::Relative(Vector2 { x: 0.5, y: 0.30, }),
             TransformVector::Absolute(Vector2 { x: 150.0, y: 40.0, }),
             Vector2 { x: 0.5, y: 0.5, },
         ), "Play Again".to_string(), 23.0, 1));
@@ -181,7 +181,7 @@ impl ApplicationDelegate {
         }));
 
         let game_info_handle = spawner.spawn(Text::new(Transform::new(
-            TransformVector::Relative(Vector2 { x: 0.5, y: 0.16 }),
+            TransformVector::Relative(Vector2 { x: 0.5, y: 0.20 }),
             TransformVector::Absolute(Vector2 { x: 10.0, y: 10.0, }),
             Vector2 { x: 0.5, y: 0.5, },
         ), TextConfig {
