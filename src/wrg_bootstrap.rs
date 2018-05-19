@@ -34,8 +34,8 @@ impl Application {
     }
 
     pub fn canvas_properties_ptr(&self) -> *const u32 { self.inner.canvas_properties_ptr() }
-    pub fn keys_ptr(&self) -> *const wasm_rgame::KeyCodeState { self.inner.keys_ptr() }
-    pub fn mouse_events_ptr(&self) -> *const wasm_rgame::MouseEvent { self.inner.mouse_events_ptr() }
+    pub fn keys_ptr(&self) -> *const u8 { self.inner.keys_ptr() }
+    pub fn mouse_events_ptr(&self) -> *const u32 { self.inner.mouse_events_ptr() }
     pub fn tick(&mut self, graphics: &mut Graphics, delta_s: f64) { self.inner.tick(graphics, delta_s); }
 }
 
@@ -52,12 +52,12 @@ impl Graphics {
         Graphics { inner: wasm_rgame::Graphics::new() }
     }
 
-    pub fn draw_rects_ptr(&self) -> *const wasm_rgame::DrawRect { self.inner.draw_rects_ptr() }
+    pub fn draw_rects_ptr(&self) -> *const f32 { self.inner.draw_rects_ptr() }
     pub fn draw_rects_len(&self) -> usize { self.inner.draw_rects_len() }
-    pub fn draw_action_colors_ptr(&self) -> *const wasm_rgame::DrawActionColor { self.inner.draw_action_colors_ptr() }
+    pub fn draw_action_colors_ptr(&self) -> *const u8 { self.inner.draw_action_colors_ptr() }
     pub fn draw_action_colors_len(&self) -> usize { self.inner.draw_action_colors_len() }
     pub fn strings_ptr(&self) -> *const u8 { self.inner.strings_ptr() }
-    pub fn string_properties_ptr(&self) -> *const wasm_rgame::StringProperties { self.inner.string_properties_ptr() }
+    pub fn string_properties_ptr(&self) -> *const f32 { self.inner.string_properties_ptr() }
     pub fn string_properties_len(&self) -> usize { self.inner.string_properties_len() }
 
     pub fn reset(&mut self) { self.inner.reset() }

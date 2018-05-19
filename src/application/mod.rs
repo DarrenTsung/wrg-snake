@@ -1,5 +1,5 @@
 use std::mem;
-use wasm_rgame::CANVAS;
+use wasm_rgame::Canvas;
 use wasm_rgame::delegate_prelude::*;
 use wrg_2d::{Direction, Grid, IntVector2};
 
@@ -29,7 +29,7 @@ impl Delegate for ApplicationDelegate {
         &mut self,
         context: &mut ApplicationContext,
         _key_manager: &KeyManager,
-        _mouse_manager: &MouseManager,
+        _mouse_state: &MouseState,
         spawner: &mut DelegateSpawner,
     ) {
         self.state = match mem::replace(&mut self.state, ApplicationState::Replaced) {
@@ -75,12 +75,14 @@ impl Delegate for ApplicationDelegate {
     fn render(&self, graphics: &mut Graphics) {
         match self.state {
             ApplicationState::GameOver(..) | ApplicationState::TitleScreen(..) => {
+                let canvas = Canvas::instance();
+
                 // draw a transparent overlay over the game
                 graphics.draw_rect(
                     0.0,
                     0.0,
-                    CANVAS.width() as f32,
-                    CANVAS.height() as f32,
+                    canvas.width() as f32,
+                    canvas.height() as f32,
                     [255, 255, 255, 150]
                 );
             },
@@ -91,9 +93,10 @@ impl Delegate for ApplicationDelegate {
 
 impl ApplicationDelegate {
     pub fn new(spawner: &mut DelegateSpawner) -> ApplicationDelegate {
+        let canvas = Canvas::instance();
         let (canvas_width, canvas_height) = calculate_grid_canvas_size(&Self::grid());
-        CANVAS.set_width(canvas_width);
-        CANVAS.set_height(canvas_height);
+        canvas.set_width(canvas_width);
+        canvas.set_height(canvas_height);
 
         let mut title_config = Self::config();
         title_config.input_allowed = false;

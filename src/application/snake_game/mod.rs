@@ -111,7 +111,7 @@ impl Delegate for SnakeGame {
         &mut self,
         context: &mut ApplicationContext,
         key_manager: &KeyManager,
-        _mouse_manager: &MouseManager,
+        _mouse_state: &MouseState,
         _delegate_spawner: &mut DelegateSpawner,
     ) {
         let new_state = match self.handle.state.replace(SnakeGameState::Running) {

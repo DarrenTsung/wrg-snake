@@ -29,7 +29,9 @@ pub struct wrg_snake_EntryPoint {}
 #[wasm_bindgen]
 impl wrg_snake_EntryPoint {
     pub fn init(application: &mut Application) {
-        let app_delegate = ApplicationDelegate::new(application.as_spawner());
-        application.spawn_root(app_delegate);
+        let spawner = application.as_spawner();
+
+        let app_delegate = ApplicationDelegate::new(spawner);
+        spawner.spawn_root(app_delegate);
     }
 }
