@@ -1,11 +1,8 @@
 use circular_queue::CircularQueue;
 use wrg_2d::IntVector2;
 
-pub mod action;
-pub use self::action::SnakeActionMoveTo;
-
 pub mod controller;
-pub use self::controller::PlayerSnakeController;
+pub use self::controller::{PlayerSnakeController, SnakeActionMoveTo};
 
 // we should never hit this, but it's nice to have some bounds
 const MAX_LENGTH : usize = 1000;

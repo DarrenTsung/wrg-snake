@@ -1,7 +1,7 @@
 #![feature(euclidean_division)]
-pub mod grid;
-pub mod vector;
-pub mod direction;
+mod direction;
+mod grid;
+mod vector;
 
 pub use vector::IntVector2;
 pub use grid::Grid;

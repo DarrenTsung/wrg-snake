@@ -1,6 +1,10 @@
-use super::{Snake, SnakeActionMoveTo};
+use super::Snake;
 use wasm_rgame::{KeyManager, key_codes};
-use wrg_2d::Direction;
+use wrg_2d::{IntVector2, Direction};
+
+pub struct SnakeActionMoveTo {
+    pub position: IntVector2
+}
 
 pub struct PlayerSnakeController {
     direction: Direction,
