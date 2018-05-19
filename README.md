@@ -1,2 +1,2 @@
-# wgg-snake
-Snake implemented with the wasm-gg framework.
+# wrg-snake
+Snake implemented with the wasm-rgame framework.

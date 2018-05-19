@@ -1,18 +1,17 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 use wasm_rgame::delegate_prelude::*;
+use wbg_rand::{Rng, wasm_rng};
 use wrg_2d::{Grid, IntVector2};
 
 mod config;
 mod food;
-mod random;
 mod renderer;
 mod snake;
 
 pub use self::config::Config;
 
 use self::food::Food;
-use self::random::PsuedoRandom;
 use self::renderer::SnakeGameRenderer;
 use self::snake::{PlayerSnakeController, Snake, SnakeActionMoveTo};
 
@@ -28,7 +27,6 @@ const ACTION_INTERVAL_DECR_PERCENT : f64 = 0.8;
 
 pub struct SnakeGame {
     handle: SnakeGameHandle,
-    random: Rc<PsuedoRandom>,
     grid: Grid,
     snake: Snake,
     foods: Vec<Food>,
@@ -60,16 +58,13 @@ impl SnakeGame {
             start_position, start_length, start_direction, input_allowed, grid,
         } = config;
 
-        let random = Rc::new(PsuedoRandom::new());
-        let random2 = random.clone();
         SnakeGame {
             handle: SnakeGameHandle { state: Rc::new(RefCell::new(SnakeGameState::Running)) },
-            random,
             grid,
             snake: Snake::new(start_position, start_length),
             foods: Vec::new(),
             snake_controller: PlayerSnakeController::new(start_direction),
-            renderer: SnakeGameRenderer::new(random2),
+            renderer: SnakeGameRenderer::new(),
             input_allowed,
             last_interval: 0.0,
             interval_time: ACTION_INTERVAL_BASE,
@@ -100,8 +95,8 @@ impl SnakeGame {
     }
 
     fn random_grid_position(&self) -> IntVector2 {
-        let x = self.random.random_in_range(0, self.grid.width as usize) as i32;
-        let y = self.random.random_in_range(0, self.grid.height as usize) as i32;
+        let x = wasm_rng().gen_range(0, self.grid.width as usize) as i32;
+        let y = wasm_rng().gen_range(0, self.grid.height as usize) as i32;
         IntVector2 { x, y }
     }
 }

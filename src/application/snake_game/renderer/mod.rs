@@ -1,5 +1,4 @@
-use std::rc::Rc;
-use super::{Snake, Grid, Food, PsuedoRandom};
+use super::{Snake, Grid, Food};
 use wasm_rgame::{Graphics};
 
 const CELL_SIZE : u16 = 20;
@@ -7,17 +6,7 @@ const CELL_PADDING : u16 = 2;
 
 const GRID_PADDING : u16 = 10;
 
-lazy_static! {
-    // Too lazy to remove this from lazy_static in case
-    // we want to modify the colors dynamically
-    static ref GRID_MARKER_COLOR : Vec<[u8; 4]> = {
-        let color = vec![
-            [235, 207, 178, 80],
-        ];
-        color
-    };
-}
-
+const GRID_MARKER_COLOR: [u8; 4] = [235, 207, 178, 80];
 const FOOD_COLOR: [u8; 4] = [179, 141, 151, 255];
 const SNAKE_COLOR: [u8; 4] = [66, 75, 84, 255];
 
@@ -29,14 +18,11 @@ pub fn calculate_grid_canvas_size(grid: &Grid) -> (u32, u32) {
 }
 
 pub struct SnakeGameRenderer {
-    random: Rc<PsuedoRandom>,
 }
 
 impl SnakeGameRenderer {
-    pub fn new(random: Rc<PsuedoRandom>) -> SnakeGameRenderer {
-        SnakeGameRenderer {
-            random,
-        }
+    pub fn new() -> SnakeGameRenderer {
+        SnakeGameRenderer { }
     }
 
     pub fn render(
@@ -48,13 +34,9 @@ impl SnakeGameRenderer {
     )
     {
         // Draw the grid markers
-        let mut index = 0;
         for x in 0..grid.width {
             for y in 0..grid.height {
-                let color_index = (self.random.hash_value(index) as usize) % GRID_MARKER_COLOR.len();
-                let color = GRID_MARKER_COLOR[color_index];
-                Self::draw_cell(graphics, x, y, color);
-                index += 1;
+                Self::draw_cell(graphics, x, y, GRID_MARKER_COLOR);
             }
         }
 
