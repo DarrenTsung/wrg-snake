@@ -12,8 +12,6 @@ lazy_static! {
     // we want to modify the colors dynamically
     static ref GRID_MARKER_COLOR : Vec<[u8; 4]> = {
         let color = vec![
-            [233, 182, 169, 80],
-            [253, 196, 172, 80],
             [235, 207, 178, 80],
         ];
         color
