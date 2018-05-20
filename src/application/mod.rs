@@ -31,9 +31,6 @@ enum ApplicationState {
     },
 }
 
-// TODO (darren): it would be nice to refactor this into multiple states
-// right now, it seems like a big pain point is storing the SpawnHandle and also
-// starting state between the spawned delegate and the handle (super annoying)
 impl Delegate for ApplicationDelegate {
     fn tick(
         &mut self,
