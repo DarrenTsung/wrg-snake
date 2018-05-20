@@ -52,14 +52,9 @@ impl Delegate for ApplicationDelegate {
                     ApplicationState::TitleScreen { play_button, others }
                 }
             },
-            ApplicationState::Running { mut game } => {
-                let state = game.replace_state(SnakeGameState::Running);
-                match state {
+            ApplicationState::Running { game } => {
+                match game.state() {
                     SnakeGameState::Finished { size, time } => {
-                        // put game state back to normal every time as it will be passed
-                        // to new state no matter what.
-                        game.replace_state(SnakeGameState::Finished { size, time });
-
                         // spawn a new game if the game is over for X seconds
                         if context.total_s() - time > 1.0 {
                             Self::new_game_over(game, spawner, size)

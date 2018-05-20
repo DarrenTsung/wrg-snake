@@ -44,6 +44,7 @@ pub struct SnakeGameHandle {
     state: Rc<RefCell<SnakeGameState>>,
 }
 
+#[derive(Clone, Copy)]
 pub enum SnakeGameState {
     Running,
     Finished {
@@ -181,7 +182,7 @@ impl SpawnableDelegate for SnakeGame {
 }
 
 impl SnakeGameHandle {
-    pub fn replace_state(&mut self, state: SnakeGameState) -> SnakeGameState {
-        self.state.replace(state)
+    pub fn state(&self) -> SnakeGameState {
+        *self.state.borrow()
     }
 }
