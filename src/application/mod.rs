@@ -100,6 +100,28 @@ impl ApplicationDelegate {
         canvas.set_width(canvas_width);
         canvas.set_height(canvas_height);
 
+        ApplicationDelegate {
+            state: Self::new_title_screen(spawner),
+        }
+    }
+
+    fn config() -> Config {
+        Config {
+            start_position: IntVector2 { x: 0, y: 13 },
+            start_length: 3,
+            start_direction: Direction::Right,
+
+            input_allowed: true,
+
+            grid: Self::grid(),
+        }
+    }
+
+    fn grid() -> Grid {
+        Grid::new(15, 15)
+    }
+
+    fn new_title_screen(spawner: &mut DelegateSpawner) -> ApplicationState {
         let mut title_config = Self::config();
         title_config.input_allowed = false;
         let game_handle = spawner.spawn(SnakeGame::new(title_config));
@@ -142,25 +164,7 @@ impl ApplicationDelegate {
             render_order: 5,
         }));
 
-        ApplicationDelegate {
-            state: ApplicationState::TitleScreen(game_handle, button_handle, title_handle, subtitle_handle, made_with_handle),
-        }
-    }
-
-    fn config() -> Config {
-        Config {
-            start_position: IntVector2 { x: 0, y: 13 },
-            start_length: 3,
-            start_direction: Direction::Right,
-
-            input_allowed: true,
-
-            grid: Self::grid(),
-        }
-    }
-
-    fn grid() -> Grid {
-        Grid::new(15, 15)
+        ApplicationState::TitleScreen(game_handle, button_handle, title_handle, subtitle_handle, made_with_handle)
     }
 
     fn new_game_over(
