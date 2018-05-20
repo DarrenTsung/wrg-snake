@@ -181,7 +181,7 @@ impl SpawnableDelegate for SnakeGame {
 }
 
 impl SnakeGameHandle {
-    pub fn replace(&mut self, state: SnakeGameState) -> SnakeGameState {
+    pub fn replace_state(&mut self, state: SnakeGameState) -> SnakeGameState {
         self.state.replace(state)
     }
 }

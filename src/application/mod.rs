@@ -16,9 +16,19 @@ pub struct ApplicationDelegate {
 
 enum ApplicationState {
     Replaced,
-    TitleScreen(SpawnHandle<SnakeGameHandle>, SpawnHandle<ButtonHandle>, SpawnHandle<()>, SpawnHandle<()>, SpawnHandle<()>),
-    Running(SpawnHandle<SnakeGameHandle>),
-    GameOver(SpawnHandle<SnakeGameHandle>, SpawnHandle<()>, SpawnHandle<()>, SpawnHandle<ButtonHandle>),
+    TitleScreen {
+        play_button: SpawnHandle<ButtonHandle>,
+        others: SpawnHandles,
+    },
+
+    Running {
+        game: SpawnHandle<SnakeGameHandle>,
+    },
+
+    GameOver {
+        play_again_button: SpawnHandle<ButtonHandle>,
+        others: SpawnHandles,
+    },
 }
 
 // TODO (darren): it would be nice to refactor this into multiple states
@@ -34,41 +44,41 @@ impl Delegate for ApplicationDelegate {
     ) {
         self.state = match mem::replace(&mut self.state, ApplicationState::Replaced) {
             ApplicationState::Replaced => unreachable!(),
-            ApplicationState::TitleScreen(game_handle, button_handle, title_handle, subtitle_handle, made_with_handle) => {
-                if button_handle.clicked() {
-                    let game_handle = spawner.spawn(SnakeGame::new(Self::config()));
-                    ApplicationState::Running(game_handle)
+            ApplicationState::TitleScreen { play_button, others } => {
+                if play_button.clicked() {
+                    let game = spawner.spawn(SnakeGame::new(Self::config()));
+                    ApplicationState::Running { game }
                 } else {
-                    ApplicationState::TitleScreen(game_handle, button_handle, title_handle, subtitle_handle, made_with_handle)
+                    ApplicationState::TitleScreen { play_button, others }
                 }
             },
-            ApplicationState::Running(mut game_handle) => {
-                let state = game_handle.replace(SnakeGameState::Running);
+            ApplicationState::Running { mut game } => {
+                let state = game.replace_state(SnakeGameState::Running);
                 match state {
                     SnakeGameState::Finished { size, time } => {
                         // put game state back to normal every time as it will be passed
                         // to new state no matter what.
-                        game_handle.replace(SnakeGameState::Finished { size, time });
+                        game.replace_state(SnakeGameState::Finished { size, time });
 
                         // spawn a new game if the game is over for X seconds
                         if context.total_s() - time > 1.0 {
-                            Self::new_game_over(game_handle, spawner, size)
+                            Self::new_game_over(game, spawner, size)
                         } else {
-                            ApplicationState::Running(game_handle)
+                            ApplicationState::Running { game }
                         }
                     },
                     SnakeGameState::Running => {
                         // no need to replace back GameState as it's already Running
-                        ApplicationState::Running(game_handle)
+                        ApplicationState::Running { game }
                     }
                 }
             },
-            ApplicationState::GameOver(game_handle, header_handle, game_info_handle, play_again_handle) => {
-                if play_again_handle.clicked() {
-                    let game_handle = spawner.spawn(SnakeGame::new(Self::config()));
-                    ApplicationState::Running(game_handle)
+            ApplicationState::GameOver { play_again_button, others } => {
+                if play_again_button.clicked() {
+                    let game = spawner.spawn(SnakeGame::new(Self::config()));
+                    ApplicationState::Running { game }
                 } else {
-                    ApplicationState::GameOver(game_handle, header_handle, game_info_handle, play_again_handle)
+                    ApplicationState::GameOver { play_again_button, others }
                 }
             }
         }
@@ -76,7 +86,7 @@ impl Delegate for ApplicationDelegate {
 
     fn render(&self, graphics: &mut Graphics) {
         match self.state {
-            ApplicationState::GameOver(..) | ApplicationState::TitleScreen(..) => {
+            ApplicationState::GameOver { .. } | ApplicationState::TitleScreen { .. } => {
                 let canvas = Canvas::instance();
 
                 // draw a transparent overlay over the game
@@ -125,7 +135,7 @@ impl ApplicationDelegate {
         let mut title_config = Self::config();
         title_config.input_allowed = false;
         let game_handle = spawner.spawn(SnakeGame::new(title_config));
-        let button_handle = spawner.spawn(new_button(Transform::new(
+        let play_button = spawner.spawn(new_button(Transform::new(
             TransformVector::Relative(Vector2 { x: 0.5, y: 0.29, }),
             TransformVector::Absolute(Vector2 { x: 150.0, y: 40.0, }),
             Vector2 { x: 0.5, y: 0.5, },
@@ -164,7 +174,18 @@ impl ApplicationDelegate {
             render_order: 5,
         }));
 
-        ApplicationState::TitleScreen(game_handle, button_handle, title_handle, subtitle_handle, made_with_handle)
+        // Join handles that will not be queried for information
+        // for convenience
+        let others = SpawnHandles::new()
+            .with(game_handle)
+            .with(title_handle)
+            .with(subtitle_handle)
+            .with(made_with_handle);
+
+        ApplicationState::TitleScreen {
+            play_button,
+            others,
+        }
     }
 
     fn new_game_over(
@@ -172,7 +193,7 @@ impl ApplicationDelegate {
         spawner: &mut DelegateSpawner,
         size: usize
     ) -> ApplicationState {
-        let button_handle = spawner.spawn(new_button(Transform::new(
+        let play_again_button = spawner.spawn(new_button(Transform::new(
             TransformVector::Relative(Vector2 { x: 0.5, y: 0.30, }),
             TransformVector::Absolute(Vector2 { x: 150.0, y: 40.0, }),
             Vector2 { x: 0.5, y: 0.5, },
@@ -200,6 +221,14 @@ impl ApplicationDelegate {
             render_order: 5,
         }));
 
-        ApplicationState::GameOver(game_handle, header_handle, game_info_handle, button_handle)
+        let others = SpawnHandles::new()
+            .with(game_handle)
+            .with(header_handle)
+            .with(game_info_handle);
+
+        ApplicationState::GameOver {
+            play_again_button,
+            others,
+        }
     }
 }
