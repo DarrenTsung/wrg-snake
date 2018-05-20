@@ -1,4 +1,3 @@
-use std::mem;
 use wasm_rgame::Canvas;
 use wasm_rgame::delegate_prelude::*;
 use wrg_2d::{Direction, Grid, IntVector2};
@@ -15,10 +14,9 @@ pub struct ApplicationDelegate {
 }
 
 enum ApplicationState {
-    Replaced,
     TitleScreen {
         play_button: SpawnHandle<ButtonHandle>,
-        others: SpawnHandles,
+        _others: SpawnHandles,
     },
 
     Running {
@@ -27,7 +25,7 @@ enum ApplicationState {
 
     GameOver {
         play_again_button: SpawnHandle<ButtonHandle>,
-        others: SpawnHandles,
+        _others: SpawnHandles,
     },
 }
 
@@ -39,40 +37,8 @@ impl Delegate for ApplicationDelegate {
         _mouse_state: &MouseState,
         spawner: &mut DelegateSpawner,
     ) {
-        self.state = match mem::replace(&mut self.state, ApplicationState::Replaced) {
-            ApplicationState::Replaced => unreachable!(),
-            ApplicationState::TitleScreen { play_button, others } => {
-                if play_button.clicked() {
-                    let game = spawner.spawn(SnakeGame::new(Self::config()));
-                    ApplicationState::Running { game }
-                } else {
-                    ApplicationState::TitleScreen { play_button, others }
-                }
-            },
-            ApplicationState::Running { game } => {
-                match game.state() {
-                    SnakeGameState::Finished { size, time } => {
-                        // spawn a new game if the game is over for X seconds
-                        if context.total_s() - time > 1.0 {
-                            Self::new_game_over(game, spawner, size)
-                        } else {
-                            ApplicationState::Running { game }
-                        }
-                    },
-                    SnakeGameState::Running => {
-                        // no need to replace back GameState as it's already Running
-                        ApplicationState::Running { game }
-                    }
-                }
-            },
-            ApplicationState::GameOver { play_again_button, others } => {
-                if play_again_button.clicked() {
-                    let game = spawner.spawn(SnakeGame::new(Self::config()));
-                    ApplicationState::Running { game }
-                } else {
-                    ApplicationState::GameOver { play_again_button, others }
-                }
-            }
+        if let Some(new_state) = self.calculate_next_state(context, spawner) {
+            self.state = new_state;
         }
     }
 
@@ -107,6 +73,36 @@ impl ApplicationDelegate {
         }
     }
 
+    fn calculate_next_state(
+        &self,
+        context: &mut ApplicationContext,
+        spawner: &mut DelegateSpawner
+    ) -> Option<ApplicationState>
+    {
+        match self.state {
+            ApplicationState::TitleScreen { ref play_button, .. } => {
+                if play_button.clicked() {
+                    return Some(Self::new_game_running(spawner))
+                }
+            },
+            ApplicationState::Running { ref game } => {
+                if let SnakeGameState::Finished { size, time } = game.state() {
+                    // only spawn a new game if the game is over for X seconds
+                    if context.total_s() - time > 1.0 {
+                        return Some(Self::new_game_over(game.clone(), spawner, size))
+                    }
+                }
+            },
+            ApplicationState::GameOver { ref play_again_button, .. } => {
+                if play_again_button.clicked() {
+                    return Some(Self::new_game_running(spawner))
+                }
+            },
+        }
+
+        None
+    }
+
     fn config() -> Config {
         Config {
             start_position: IntVector2 { x: 0, y: 13 },
@@ -121,6 +117,11 @@ impl ApplicationDelegate {
 
     fn grid() -> Grid {
         Grid::new(15, 15)
+    }
+
+    fn new_game_running(spawner: &mut DelegateSpawner) -> ApplicationState {
+        let game = spawner.spawn(SnakeGame::new(Self::config()));
+        ApplicationState::Running { game }
     }
 
     fn new_title_screen(spawner: &mut DelegateSpawner) -> ApplicationState {
@@ -176,7 +177,7 @@ impl ApplicationDelegate {
 
         ApplicationState::TitleScreen {
             play_button,
-            others,
+            _others: others,
         }
     }
 
@@ -220,7 +221,7 @@ impl ApplicationDelegate {
 
         ApplicationState::GameOver {
             play_again_button,
-            others,
+            _others: others,
         }
     }
 }
