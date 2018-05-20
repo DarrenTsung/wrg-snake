@@ -17,12 +17,11 @@ pub fn calculate_grid_canvas_size(grid: &Grid) -> (u32, u32) {
     (grid_width.into(), grid_height.into())
 }
 
-pub struct SnakeGameRenderer {
-}
+pub struct SnakeGameRenderer {}
 
 impl SnakeGameRenderer {
     pub fn new() -> SnakeGameRenderer {
-        SnakeGameRenderer { }
+        SnakeGameRenderer {}
     }
 
     pub fn render(
