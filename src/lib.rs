@@ -11,8 +11,8 @@ use wasm_bindgen::prelude::*;
 
 pub use wasm_rgame::bootstrap::*;
 
-pub mod application;
-pub use application::*;
+mod application;
+use application::*;
 
 #[wasm_bindgen]
 #[allow(non_camel_case_types)]
