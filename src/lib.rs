@@ -9,7 +9,8 @@ extern crate wrg_2d;
 
 use wasm_bindgen::prelude::*;
 
-pub use wasm_rgame::bootstrap::*;
+mod bootstrap;
+pub use self::bootstrap::*;
 
 mod application;
 use application::*;

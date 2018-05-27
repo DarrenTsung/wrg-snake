@@ -1,3 +1,0 @@
-[submodule "wasm-rgame-js"]
-	path = wasm-rgame-js
-	url = git@github.com:DarrenTsung/wasm-rgame-js.git
