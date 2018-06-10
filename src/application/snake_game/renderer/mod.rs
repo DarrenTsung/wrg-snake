@@ -57,6 +57,6 @@ impl SnakeGameRenderer {
         let width = CELL_SIZE;
         let height = CELL_SIZE;
 
-        graphics.draw_rect(pos_x as f32, pos_y as f32, width as f32, height as f32, color);
+        graphics.draw_rect(pos_x as f32, pos_y as f32, width as f32, height as f32, color, 0.0);
     }
 }

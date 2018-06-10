@@ -53,7 +53,8 @@ impl Delegate for ApplicationDelegate {
                     0.0,
                     canvas.width() as f32,
                     canvas.height() as f32,
-                    [255, 255, 255, 150]
+                    [255, 255, 255, 150],
+                    0.0,
                 );
             },
             _ => (),
